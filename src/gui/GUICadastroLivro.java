@@ -7,6 +7,7 @@ import javax.swing.JOptionPane;
 import java.awt.Font;
 import javax.swing.JTextField;
 
+import manager.AbstractValidadorDadosBiblioteca;
 import obj.Livro;
 import obj.SistemaBiblioteca;
 
@@ -17,7 +18,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.Action;
 import java.awt.event.ActionListener;
 
-public class GUICadastroLivro {
+public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 	
 	private String titulo;
 	
@@ -124,25 +125,34 @@ public class GUICadastroLivro {
 		
 	}
 	private class ActionCadastrar extends AbstractAction {
+		
+		private Livro l;
+		
 		public ActionCadastrar() {
 			putValue(NAME, "Cadastrando");
 			putValue(SHORT_DESCRIPTION, "Cadastrar livro");
 		}
 		public void actionPerformed(ActionEvent e) {
 			//System.out.println("Cadastrando");
-			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().CadastrarLivro(
-					new Livro(textAutor.getText(), 
-							textEditora.getText(),
-							textISBNCode.getText(), 
-							textTitulo.getText())
-					)){
-				JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso !","SUCESSO !", JOptionPane.YES_OPTION);
+			
+			l = new Livro(textAutor.getText(), 
+					textEditora.getText(),
+					textISBNCode.getText(), 
+					textTitulo.getText());
+			
+			if(!ValidarLivro(l)){
+				JOptionPane.showMessageDialog(null,"Todos os campos devem ser preenchidos ! ", "ERRO !", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().CadastrarLivro(l)){
+				JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso !", "SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
-				JOptionPane.showMessageDialog(null,"Erro ao realizar cadastro !","ERRO !", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,"Erro ao realizar cadastro !", "ERRO !", JOptionPane.ERROR_MESSAGE);	
 			}
-				
-		}
+			
+		}// end actionPerformed
 	}
 	private class ActionCancelar extends AbstractAction {
 		public ActionCancelar() {
@@ -150,8 +160,8 @@ public class GUICadastroLivro {
 			putValue(SHORT_DESCRIPTION, "Cancelar cadastro");
 		}
 		public void actionPerformed(ActionEvent e) {
-			//System.out.println("Cancelado");
 			frame.dispose();
 		}
 	}
+
 }

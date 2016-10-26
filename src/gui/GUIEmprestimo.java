@@ -8,6 +8,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import manager.AbstractValidadorDadosBiblioteca;
 import obj.Cliente;
 import obj.Livro;
 import obj.SistemaBiblioteca;
@@ -17,7 +18,7 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
 
-public class GUIEmprestimo {
+public class GUIEmprestimo extends AbstractValidadorDadosBiblioteca {
 	
 	private String titulo;
 	
@@ -105,6 +106,12 @@ public class GUIEmprestimo {
 		lblNome.setBounds(43, 193, 42, 23);
 		frame.getContentPane().add(lblNome);
 		
+		JLabel lblsomenteNmeros = new JLabel("*Somente n\u00FAmeros");
+		lblsomenteNmeros.setFont(new Font("Dialog", Font.PLAIN, 11));
+		lblsomenteNmeros.setForeground(Color.RED);
+		lblsomenteNmeros.setBounds(95, 215, 110, 16);
+		frame.getContentPane().add(lblsomenteNmeros);
+		
 		this.frame.setVisible(true);
 		
 	}
@@ -123,11 +130,16 @@ public class GUIEmprestimo {
 			c = new Cliente(textCpf.getText());
 			l = new Livro(textISBNCode.getText(), textTitulo.getText());
 			
+			if(!ValidarEmprestimo(l, c)){
+				JOptionPane.showMessageDialog(null,"Todos os campos devem ser preenchidos !","ERRO !", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
 			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().RealizarEmprestimo(l, c)){
-				JOptionPane.showMessageDialog(null,"Emprestimo realizado com sucesso !","SUCESSO !", JOptionPane.YES_OPTION);
+				JOptionPane.showMessageDialog(null,"Emprestimo realizado com sucesso !","SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
-				JOptionPane.showMessageDialog(null,"Erro ao realizar emprestimo !","ERRO !", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,"Erro ao realizar emprestimo !\nO livro pode nao estar disponivel\nOu o numero de imprestimo para este socio é superior ao permitido","ERRO !", JOptionPane.ERROR_MESSAGE);
 			}
 			
 		}

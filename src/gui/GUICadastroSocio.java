@@ -18,11 +18,9 @@ import javax.swing.Action;
 import javax.swing.JTextPane;
 import javax.swing.UIManager;
 
-public class GUICadastroSocio {
-	
-	public final static int CADASTRO = 0;
-	
-	public final static int PESQUISA = 1;
+import manager.AbstractValidadorDadosBiblioteca;
+
+public class GUICadastroSocio extends AbstractValidadorDadosBiblioteca {
 
 	private String titulo;
 	
@@ -118,13 +116,11 @@ public class GUICadastroSocio {
 		txtCpf.setBounds(95, 103, 179, 20);
 		frame.getContentPane().add(txtCpf);
 		
-		JTextPane txtpnSomenteNmeros = new JTextPane();
-		txtpnSomenteNmeros.setBackground(UIManager.getColor("Button.background"));
-		txtpnSomenteNmeros.setForeground(Color.RED);
-		txtpnSomenteNmeros.setFont(new Font("Tahoma", Font.PLAIN, 10));
-		txtpnSomenteNmeros.setText("*Somente n\u00FAmeros");
-		txtpnSomenteNmeros.setBounds(95, 122, 95, 20);
-		frame.getContentPane().add(txtpnSomenteNmeros);
+		JLabel lblsomenteNmeros = new JLabel("*Somente n\u00FAmeros");
+		lblsomenteNmeros.setFont(new Font("Dialog", Font.PLAIN, 11));
+		lblsomenteNmeros.setForeground(Color.RED);
+		lblsomenteNmeros.setBounds(95, 122, 168, 16);
+		frame.getContentPane().add(lblsomenteNmeros);
 		
 	}
 	
@@ -147,11 +143,16 @@ public class GUICadastroSocio {
 			
 			//System.out.println("Cadastrando "+cliente.getNome());
 			
+			if(!ValidarCliente(cliente)){
+				JOptionPane.showMessageDialog(null,"Todos os campos devem ser preenchidos ! ", "ERRO !", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+						
 			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().CadastrarCliente(cliente)){
-				JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso !","SUCESSO !", JOptionPane.YES_OPTION);
+				JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso !","SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
-				JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso !","ERRO !", JOptionPane.ERROR_MESSAGE);
+				JOptionPane.showMessageDialog(null,"Erro ao realizar cadastro !","ERRO !", JOptionPane.ERROR_MESSAGE);
 			}
 			
 		}

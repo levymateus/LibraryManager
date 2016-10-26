@@ -59,8 +59,6 @@ public class GUIManterLivro {
 		}
 		frame.getContentPane().add(lblDisponibilidade);
 		
-		
-		
 		this.frame.setVisible(true);
 	}
 
@@ -147,14 +145,14 @@ public class GUIManterLivro {
 			putValue(SHORT_DESCRIPTION, "Atualizar dados do livro");
 		}
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Cadastrando");
+			//System.out.println("Cadastrando");
 			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().EditarLivro(
 					new Livro(textAutor.getText(), 
 							textEditora.getText(),
 							textISBNCode.getText(), 
 							textTitulo.getText())
 					)){
-				JOptionPane.showMessageDialog(null,"Ediçao realizada com sucesso !","SUCESSO !", JOptionPane.YES_OPTION);
+				JOptionPane.showMessageDialog(null,"Ediçao realizada com sucesso !","SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
 				JOptionPane.showMessageDialog(null,"Erro ao realizar edição !","ERRO !", JOptionPane.ERROR_MESSAGE);
@@ -167,7 +165,7 @@ public class GUIManterLivro {
 			putValue(SHORT_DESCRIPTION, "Cancelar cadastro");
 		}
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Cancelado");
+			//System.out.println("Cancelado");
 			frame.dispose();
 		}
 	}
@@ -180,7 +178,7 @@ public class GUIManterLivro {
 			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().ExcluirLivro(
 					new Livro(textISBNCode.getText())
 					)){
-				JOptionPane.showMessageDialog(null,"Deleção realizada com sucesso !","SUCESSO !", JOptionPane.YES_OPTION);
+				JOptionPane.showMessageDialog(null,"Deleção realizada com sucesso !","SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
 				JOptionPane.showMessageDialog(null,"Erro ao realizar deleção !","ERRO !", JOptionPane.ERROR_MESSAGE);

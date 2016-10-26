@@ -148,10 +148,10 @@ public class GUIManterSocio {
 					txtNome.getText(),
 					txtCpf.getText());
 			
-			System.out.println("Cadastrando "+cliente.getNome());
+			//System.out.println("Cadastrando "+cliente.getNome());
 			
 			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().EditarCliente(cliente)){
-				JOptionPane.showMessageDialog(null,"Ediçao realizada com sucesso !","SUCESSO !", JOptionPane.YES_OPTION);
+				JOptionPane.showMessageDialog(null,"Ediçao realizada com sucesso !","SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
 				JOptionPane.showMessageDialog(null,"Erro ao realizar edição !","ERRO !", JOptionPane.ERROR_MESSAGE);
@@ -166,7 +166,7 @@ public class GUIManterSocio {
 			putValue(SHORT_DESCRIPTION, "Cancelar cadastro");
 		}
 		public void actionPerformed(ActionEvent e) {
-			System.out.println("Cancelado");
+			//System.out.println("Cancelado");
 			frame.dispose();
 		}
 	}

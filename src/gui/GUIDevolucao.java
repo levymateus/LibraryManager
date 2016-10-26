@@ -8,6 +8,7 @@ import java.awt.Font;
 import javax.swing.JButton;
 import javax.swing.JTextField;
 
+import manager.AbstractValidadorDadosBiblioteca;
 import obj.Livro;
 import obj.SistemaBiblioteca;
 
@@ -16,7 +17,7 @@ import javax.swing.AbstractAction;
 import java.awt.event.ActionEvent;
 import javax.swing.Action;
 
-public class GUIDevolucao {
+public class GUIDevolucao extends AbstractValidadorDadosBiblioteca {
 
 	private String titulo;
 	
@@ -71,15 +72,29 @@ public class GUIDevolucao {
 		
 	}
 	private class ActionDevolver extends AbstractAction {
+		
+		private Livro l;
+		
 		public ActionDevolver() {
 			putValue(NAME, "Devolver");
 			putValue(SHORT_DESCRIPTION, "Devolve o livro");
 		}
 		public void actionPerformed(ActionEvent e) {
-			//System.out.println("Devolvendo");
-			int valorMulta = SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().RealizarDevolucao(
-					new Livro(textISBNCode.getText()));
-			JOptionPane.showMessageDialog(null,"Valor da multa "+valorMulta,"INFORMACAO !", JOptionPane.INFORMATION_MESSAGE);
+			
+			l = new Livro(textISBNCode.getText());
+			
+			if(!ValidarDevolucao(l)){
+				JOptionPane.showMessageDialog(null,"Todos os campos devem ser preenchidos ! ", "ERRO !", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			int valorMulta = SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().RealizarDevolucao(l);
+			
+			if(valorMulta >= 0)
+				JOptionPane.showMessageDialog(null,"Valor da multa "+valorMulta,"INFORMACAO !", JOptionPane.INFORMATION_MESSAGE);
+			else 
+				JOptionPane.showMessageDialog(null,"Erro ao realizar devolução\n Talvez esse livro nao tenha sido emprestado.","INFORMACAO !", JOptionPane.INFORMATION_MESSAGE);
+			
 			frame.dispose();
 		}
 	}
@@ -89,7 +104,6 @@ public class GUIDevolucao {
 			putValue(SHORT_DESCRIPTION, "Cancela devolução");
 		}
 		public void actionPerformed(ActionEvent e) {
-			//System.out.println("Cancelado");
 			frame.dispose();
 		}
 	}

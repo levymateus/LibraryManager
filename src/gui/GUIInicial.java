@@ -117,15 +117,16 @@ public class GUIInicial extends JFrame {
 		
 		this.setVisible(true);
 		
-		this.initSistema();
+		//this.initSistema();
 		
 	}
 	
-	private void initSistema()
+	public void initSistema(String endereco, String database, String login, String senha)
 	{
+		
 		if(!SistemaBiblioteca.getInstance().
-		abrirBiblioteca("jdbc:postgresql://localhost:5432/sistema-biblioteca",
-				"postgres", "postgres")){
+		abrirBiblioteca("jdbc:postgresql://"+endereco+"/"+database,
+				login, senha)){
 			JOptionPane.showMessageDialog(null,"Conexao com a base de dados não foi realizada !","AVISO !", JOptionPane.INFORMATION_MESSAGE);
 		}
 

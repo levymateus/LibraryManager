@@ -1,12 +1,11 @@
 package manager;
 
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-import java.sql.Timestamp;
+
 import obj.Cliente;
 import obj.Livro;
 
@@ -32,14 +31,9 @@ public class GerenciadorBiblioteca implements Biblioteca {
 		try {
 			conexao = DriverManager.getConnection(this.url, this.user, this.password);
 			if(conexao != null){
-				//System.out.println("Conxao estabeleciada");
 				return true;
 			}
-			
-			
-			
 		} catch (Exception e) {
-			//System.err.println("Conexao nao foi realizada");
 			return false;
 		}
 		
@@ -65,8 +59,8 @@ public class GerenciadorBiblioteca implements Biblioteca {
 		final int codisbn = 1;
 		final int titulo = 2;
 		final int autor = 3;
-		final int disponivel = 4;
-		final int editora = 5;
+		final int disponivel = 5;
+		final int editora = 4;
 		
 		
 		try {
@@ -84,21 +78,15 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			l.setDisponibilidade(rs.getBoolean(disponivel));
 			l.setEditora(rs.getString(editora));
 			
-			System.out.println(l.getTitulo()+l.getAutor()+l.getCodISBN());
-			System.out.println("Consulta");
-			
 			rs.close();
 			ps.close();
 			
+			return l;
+			
 		} catch (Exception e) {
-			//CHAMA CLASSE DE POPUP E PASSA COD DE ERRO
-			// GerenciadorErro(String mesangem, int id, ...);
-			//System.err.println("Algum erro ocorreu");
 			return l;
 		}
-		
-		return l;
-		
+				
 	}
 
 	@Override
@@ -115,19 +103,15 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps.setString(1, l.getCodISBN());
 			ps.setString(2, l.getTitulo());
 			ps.setString(3, l.getAutor());
-			ps.setBoolean(5, true);
 			ps.setString(4, l.getEditora());
+			ps.setBoolean(5, true);
 			ps.executeUpdate();
-			//System.out.println("Insercao feita");
+			return true;
 			
 		} catch (Exception e) {
-			//System.err.println("Algum erro ocorreu");
-			//e.printStackTrace();
 			return false;
 		}
 		
-		return true;
-
 	}
 
 	@Override
@@ -146,16 +130,12 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps.setString(3, l.getEditora());
 			ps.setString(4, l.getCodISBN());
 			ps.executeUpdate();
-			
-			System.out.println("Edicao executada");
+			return true;
 			
 		} catch (Exception e) {
-			//System.err.println("Algum erro ocorreu");
-			//e.printStackTrace();
 			return false;
 		}
-		return true;
-
+		
 	}
 
 	@Override
@@ -170,22 +150,24 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			PreparedStatement ps = conexao.prepareStatement(query);
 			ps.setString(1, l.getCodISBN());
 			ps.executeUpdate();
-			//System.out.println("Livro excluido");
+			return true;
+			
 		} catch (Exception e) {
-			//System.err.println("Ocorreu um erro");
 			return false;
 		}
 		
-		return true;
-
 	}
 
 	@Override
 	public boolean RealizarEmprestimo(Livro l, Cliente c) {
 		
 		int IDEmprestimo;
+		
+		final String numEmprestimos = "SELECT COUNT(IDEmprest) FROM pessoa_emp WHERE pessoa_emp.CPF = ?";
+		
+		final String disp = "SELECT disponivel FROM exemplar WHERE exemplar.codISBN = ?";
 
-		final String queryEmprestimo = "INSERT INTO Emprestimo (DataEmprest) VALUES (?)";
+		final String queryEmprestimo = "INSERT INTO Emprestimo (DataEmprest) VALUES (now())";
 		
 		final String empEx = "INSERT INTO Emprest_exemplar (IDEmprest, codISBN) values (?, ?)";
 		
@@ -194,22 +176,36 @@ public class GerenciadorBiblioteca implements Biblioteca {
 		final String selectIDEmprestimo = "SELECT IDEmprest FROM Emprestimo ORDER BY IDEmprest DESC LIMIT 1";
 		
 		final String upLivro = "UPDATE Exemplar SET disponivel = false WHERE Exemplar.codISBN = ?";
-		
-		Date date = new Date( System.currentTimeMillis() );
-		
+			
 		try {
 			
-			// cria um novo emprestimo
-			PreparedStatement ps = conexao.prepareStatement(queryEmprestimo);
-			ps.setDate(1, date);
+			PreparedStatement ps = this.conexao.prepareStatement(numEmprestimos);
+			ps.setString(1, c.getCPF());
+			ResultSet rs = ps.executeQuery();
+			rs.next();			
+			int num = rs.getInt(1);
+			
+			if(num >= 3)
+				return false;
+			
+			ps = this.conexao.prepareStatement(disp);
+			
+			ps.setString(1, l.getCodISBN());
+			rs = ps.executeQuery();
+			rs.next();
+			
+			if(rs.getBoolean(1) == false)
+				return false;
+			
+			// insere um novo emprestimo
+			ps = conexao.prepareStatement(queryEmprestimo);
 			ps.executeUpdate();
 			
 			// captura o id do ultimo emprestimo inserido
 			ps = conexao.prepareStatement(selectIDEmprestimo);
-			ResultSet rs = ps.executeQuery();
-			rs.next();// aponta para o primeiro valor retornado da consulta
+			rs = ps.executeQuery();
+			rs.next();
 			IDEmprestimo = rs.getInt(1);
-			System.out.println(IDEmprestimo);
 			rs.close();
 			
 			// insere na relação de emprestimo e livro relacionado ao emprestimo
@@ -228,17 +224,12 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps.setString(1, l.getCodISBN());
 			ps.executeUpdate();
 			
-			//System.out.println("Emprestimo realizado com sucesso");
+			return true;
 						
 		} catch (SQLException e) {
-			
-			//System.err.println("Erro ao emprestar livro");
-			//e.printStackTrace();
 			return false;
-			
 		}
-		return true;
-
+		
 	}
 
 	@Override
@@ -248,11 +239,7 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			return -1;
 		
 		int IDEmprest = 0;
-		
-		Timestamp  dataEmprestimo;
-		
-		int valorMulta = 0;
-		
+						
 		final String selEmprestimo = "SELECT * FROM emprest_exemplar WHERE emprest_exemplar.codISBN = ?";
 		
 		final String delPessoa_emp = "DELETE FROM pessoa_emp WHERE pessoa_emp.IDEmprest = ?";
@@ -271,10 +258,7 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ResultSet rs = ps.executeQuery();
 			rs.next();
 			IDEmprest = rs.getInt(1);
-			//dataEmprestimo = rs.getTimestamp(2);
-			//System.out.println(IDEmprest);
-			//System.out.println(dataEmprestimo.getTime());
-			
+						
 			// exclui pessoa com relação ao emprestimo
 			ps = this.conexao.prepareStatement(delPessoa_emp);
 			ps.setInt(1, IDEmprest);
@@ -284,11 +268,7 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps = this.conexao.prepareStatement(delEmprestExemplar);
 			ps.setInt(1, IDEmprest);
 			ps.executeUpdate();
-			
-			//Date atual = new Date(System.currentTimeMillis());
-			
-			//valorMulta = CalcularMulta(atual, dataEmprestimo);
-			
+									
 			// deleta emprestimo
 			ps = this.conexao.prepareStatement(delEmprestimo);
 			ps.setInt(1, IDEmprest);
@@ -301,29 +281,35 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			
 			rs.close();
 			ps.close();
-			
-			//System.out.println("Devolução realizada");
+						
+			return this.CalcularMulta(l.getCodISBN());
 			
 			
 		} catch (Exception e) {
-			//System.err.println("Um erro ocorreu ao fazer devolução");
-			//e.printStackTrace();
 			return -1;
 		}
-		
-		return valorMulta;
-		
+				
 	}
 		
 	/*
-	 * @return Retorna o valor da multa
+	 * @return Retorna o valor da multa. Em caso de erro retorna -1;
 	 */
-	private int CalcularMulta(Date atual, Date emprestimo){
-				
-		//System.out.println(atual.getTime());
-		//System.out.println(emprestimo.getTime());
+	private int CalcularMulta(String codISBN){
 		
-		return 0;
+		final String query = "select devolverLivro(?)";
+		
+		try {
+			
+			PreparedStatement ps = this.conexao.prepareStatement(query);
+			ps.setString(1, codISBN);
+			ResultSet rs = ps.executeQuery();
+			rs.next();
+			return rs.getInt(1);
+			
+		} catch (Exception e) {
+			return -1;
+		}
+		
 	}
 
 	@Override
@@ -343,7 +329,6 @@ public class GerenciadorBiblioteca implements Biblioteca {
 		
 		try {
 			
-			System.out.println(c.getNome());
 			PreparedStatement ps = this.conexao.prepareStatement(query);
 			ps.setString(1, c.getCPF());
 			ps.setString(2, c.getNome());
@@ -351,14 +336,11 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps.setString(4, c.getTelefone());
 			ps.setString(5, c.getEmail());
 			ps.executeUpdate();
+			return true;
 			
 		} catch (Exception e) {
-			// TODO: handle exception
-			//System.err.println(e.getMessage().toString());
 			return false;
-		}
-		return true;
-		
+		}		
 	}
 
 	/**
@@ -391,15 +373,12 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			rs.close();
 			ps.close();
 			
-		} catch (Exception e) {
+			return c;
 			
-			//System.err.println("Erro ao consultar socio");
-			//e.printStackTrace();
+		} catch (Exception e) {
 			return null;
 			
 		}
-		
-		return c;
 		
 	}
 
@@ -421,16 +400,11 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps.setString(5, c.getCPF());
 			ps.executeUpdate();
 			
-			//System.out.println("Cliente editado com sucesso");
+			return true;
 			
 		} catch (Exception e) {
-			
-			//System.err.println("Erro ao editar o cliente");
-			//e.printStackTrace();
 			return false;
-			
 		}
-		return true;
 		
 	}
 
