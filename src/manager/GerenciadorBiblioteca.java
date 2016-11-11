@@ -239,6 +239,7 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			return -1;
 		
 		int IDEmprest = 0;
+		int multa = 0;
 						
 		final String selEmprestimo = "SELECT * FROM emprest_exemplar WHERE emprest_exemplar.codISBN = ?";
 		
@@ -251,6 +252,8 @@ public class GerenciadorBiblioteca implements Biblioteca {
 		final String delEmprestimo = "DELETE FROM Emprestimo WHERE Emprestimo.IDEmprest = ?";
 		
 		try {
+			
+			multa = this.CalcularMulta(l.getCodISBN());
 			
 			// selecionar id do emprestimo
 			PreparedStatement ps = this.conexao.prepareStatement(selEmprestimo);
@@ -282,7 +285,7 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			rs.close();
 			ps.close();
 						
-			return this.CalcularMulta(l.getCodISBN());
+			return multa;
 			
 			
 		} catch (Exception e) {
@@ -304,7 +307,9 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			ps.setString(1, codISBN);
 			ResultSet rs = ps.executeQuery();
 			rs.next();
-			return rs.getInt(1);
+			int multa = rs.getInt(1);
+			System.out.println(multa);
+			return multa;
 			
 		} catch (Exception e) {
 			return -1;
@@ -403,6 +408,20 @@ public class GerenciadorBiblioteca implements Biblioteca {
 			return true;
 			
 		} catch (Exception e) {
+			return false;
+		}
+		
+	}
+
+	@Override
+	public boolean RealizarLogin(String login, String pass) {
+		
+		final String query;
+		
+		try {
+			return true;
+		} catch (Exception e) {
+			// TODO: handle exception
 			return false;
 		}
 		

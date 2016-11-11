@@ -24,5 +24,7 @@ public interface Biblioteca {
 	public int RealizarDevolucao(Livro l);
 	
 	public int EmitirMulta();
+	
+	public boolean RealizarLogin(String login, String pass);
 
 }
