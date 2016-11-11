@@ -287,7 +287,6 @@ public class GerenciadorBiblioteca implements Biblioteca {
 						
 			return multa;
 			
-			
 		} catch (Exception e) {
 			return -1;
 		}
