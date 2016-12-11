@@ -8,7 +8,7 @@ import java.awt.Font;
 import javax.swing.JTextField;
 
 import manager.AbstractValidadorDadosBiblioteca;
-import obj.Livro;
+import obj.Revista;
 import obj.SistemaBiblioteca;
 
 import java.awt.Color;
@@ -18,7 +18,7 @@ import java.awt.event.ActionEvent;
 import javax.swing.Action;
 import java.awt.event.ActionListener;
 
-public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
+public class GUICadastroRevista extends AbstractValidadorDadosBiblioteca {
 	
 	private String titulo;
 	
@@ -26,7 +26,7 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 	
 	private JTextField textTitulo;
 	
-	private JTextField textISBNCode;
+	private JTextField textDataEdicao;
 	
 	private JTextField textAutor;
 	
@@ -35,25 +35,24 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 	private final Action actionCadastrar = new ActionCadastrar();
 	
 	private final Action actionCancelar = new ActionCancelar();
+	
+	private JTextField textFieldNumEdicao;
 
-	/**
-	 * Create the application.
-	 */
-	public GUICadastroLivro(String titulo) {
+	public GUICadastroRevista(String titulo) {
 		this.titulo = titulo;
 		this.init();
 		this.frame.setVisible(true);
 	}
 	
-	public GUICadastroLivro(String titulo, Livro l){
-		this.titulo = titulo;
-		this.init();
-		textAutor.setText(l.getAutor());
-		textEditora.setText(l.getEditora());
-		textISBNCode.setText(l.getCodISBN());
-		textTitulo.setText(l.getTitulo());
-		this.frame.setVisible(true);
-	}
+//	public GUICadastroRevista(String titulo, Livro l){
+//		this.titulo = titulo;
+//		this.init();
+//		textAutor.setText(l.getAutor());
+//		textEditora.setText(l.getEditora());
+//		textDataEdicao.setText(l.getCodISBN());
+//		textTitulo.setText(l.getTitulo());
+//		this.frame.setVisible(true);
+//	}
 
 	/**
 	 * Initialize the contents of the frame.
@@ -70,7 +69,7 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 		frame.getContentPane().add(lblCadastroDeLivro);
 		
 		JLabel lblTitulo = new JLabel("T\u00EDtulo");
-		lblTitulo.setBounds(43, 68, 42, 23);
+		lblTitulo.setBounds(10, 68, 75, 23);
 		frame.getContentPane().add(lblTitulo);
 		
 		textTitulo = new JTextField();
@@ -79,34 +78,34 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 		textTitulo.setBounds(95, 68, 327, 23);
 		frame.getContentPane().add(textTitulo);
 		
-		JLabel lblISBNCode = new JLabel("C\u00F3digo ISBN");
-		lblISBNCode.setBounds(11, 106, 74, 23);
-		frame.getContentPane().add(lblISBNCode);
+		JLabel lblDataEdicao = new JLabel("Data edi\u00E7\u00E3o");
+		lblDataEdicao.setBounds(11, 106, 74, 23);
+		frame.getContentPane().add(lblDataEdicao);
 		
-		textISBNCode = new JTextField();
-		textISBNCode.setForeground(Color.GRAY);
-		textISBNCode.setColumns(10);
-		textISBNCode.setBounds(95, 106, 327, 23);
-		frame.getContentPane().add(textISBNCode);
+		textDataEdicao = new JTextField();
+		textDataEdicao.setForeground(Color.GRAY);
+		textDataEdicao.setColumns(10);
+		textDataEdicao.setBounds(95, 106, 327, 23);
+		frame.getContentPane().add(textDataEdicao);
 		
 		JLabel lblAutor = new JLabel("Autor");
-		lblAutor.setBounds(43, 140, 42, 23);
+		lblAutor.setBounds(10, 178, 75, 23);
 		frame.getContentPane().add(lblAutor);
 		
 		textAutor = new JTextField();
 		textAutor.setForeground(Color.GRAY);
 		textAutor.setColumns(10);
-		textAutor.setBounds(95, 140, 327, 23);
+		textAutor.setBounds(95, 178, 327, 23);
 		frame.getContentPane().add(textAutor);
 		
 		JLabel lblEditora = new JLabel("Editora");
-		lblEditora.setBounds(39, 174, 46, 23);
+		lblEditora.setBounds(10, 212, 75, 23);
 		frame.getContentPane().add(lblEditora);
 		
 		textEditora = new JTextField();
 		textEditora.setForeground(Color.GRAY);
 		textEditora.setColumns(10);
-		textEditora.setBounds(95, 174, 327, 23);
+		textEditora.setBounds(95, 212, 327, 23);
 		frame.getContentPane().add(textEditora);
 		
 		JButton Cadastrar = new JButton("Cadastrar");
@@ -115,7 +114,7 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 			}
 		});
 		Cadastrar.setAction(actionCadastrar);
-		Cadastrar.setBounds(222, 247, 95, 23);
+		Cadastrar.setBounds(192, 247, 125, 23);
 		frame.getContentPane().add(Cadastrar);
 		
 		JButton Cancelar = new JButton("Cancelar");
@@ -123,11 +122,21 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 		Cancelar.setBounds(327, 247, 95, 23);
 		frame.getContentPane().add(Cancelar);
 		
+		textFieldNumEdicao = new JTextField();
+		textFieldNumEdicao.setForeground(Color.GRAY);
+		textFieldNumEdicao.setColumns(10);
+		textFieldNumEdicao.setBounds(95, 143, 327, 23);
+		frame.getContentPane().add(textFieldNumEdicao);
+		
+		JLabel lblNEdio = new JLabel("N\u00BA Edi\u00E7\u00E3o");
+		lblNEdio.setBounds(10, 143, 75, 23);
+		frame.getContentPane().add(lblNEdio);
+		
 	}
 	@SuppressWarnings("serial")
 	private class ActionCadastrar extends AbstractAction {
 		
-		private Livro livro;
+		private Revista revista;
 		
 		public ActionCadastrar() {
 			putValue(NAME, "Cadastrando");
@@ -136,17 +145,22 @@ public class GUICadastroLivro extends AbstractValidadorDadosBiblioteca {
 		
 		public void actionPerformed(ActionEvent e) {
 			
-			livro = new Livro(textTitulo.getText(),
-					textAutor.getText(),
-					textEditora.getText(),
-					textISBNCode.getText());
-			
-			if(!ValidarLivro(livro)){
-				JOptionPane.showMessageDialog(null,"Todos os campos devem ser preenchidos ! ", "ERRO !", JOptionPane.ERROR_MESSAGE);
+			if(textDataEdicao.getText().length() < 10){
+				JOptionPane.showMessageDialog(null,"Campos: Data de edição preenchido icorretamente ! ", "ERRO !", JOptionPane.ERROR_MESSAGE);
 				return;
 			}
 			
-			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().CadastrarExemplar(livro)){
+			int nroEdicao = new Integer(textFieldNumEdicao.getText());
+			revista = new Revista(textTitulo.getText(),
+					textAutor.getText(), textEditora.getText(),
+					textDataEdicao.getText(), nroEdicao, 0);
+			
+			if(!ValidarRevista(revista)){
+				JOptionPane.showMessageDialog(null,"Campos: Data de edição são obrigatórios ! ", "ERRO !", JOptionPane.ERROR_MESSAGE);
+				return;
+			}
+			
+			if(SistemaBiblioteca.getInstance().getGerenciadorBiblioteca().CadastrarRevista(revista)){
 				JOptionPane.showMessageDialog(null,"Cadastro realizado com sucesso !", "SUCESSO !", JOptionPane.INFORMATION_MESSAGE);
 				frame.dispose();
 			}else{
